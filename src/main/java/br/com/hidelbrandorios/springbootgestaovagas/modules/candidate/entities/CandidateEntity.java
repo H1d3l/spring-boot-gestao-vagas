@@ -1,4 +1,4 @@
-package br.com.hidelbrandorios.springbootgestaovagas.modules.candidate;
+package br.com.hidelbrandorios.springbootgestaovagas.modules.candidate.entities;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

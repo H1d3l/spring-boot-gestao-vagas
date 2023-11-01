@@ -1,4 +1,4 @@
-package br.com.hidelbrandorios.springbootgestaovagas.modules.candidate.controllers;
+package br.com.hidelbrandorios.springbootgestaovagas.modules.company.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -7,24 +7,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.hidelbrandorios.springbootgestaovagas.modules.candidate.entities.CandidateEntity;
-import br.com.hidelbrandorios.springbootgestaovagas.modules.candidate.useCases.CreateCandidateUseCase;
+import br.com.hidelbrandorios.springbootgestaovagas.modules.company.entities.JobEntity;
+import br.com.hidelbrandorios.springbootgestaovagas.modules.company.useCases.CreateJobUseCase;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/candidate")
-public class CandidateController {
+@RequestMapping("/jobs")
+public class JobsController {
 
     @Autowired
-    private CreateCandidateUseCase createCandidateUseCase;
+    private CreateJobUseCase createJobUseCaseUseCase;
 
     @PostMapping("/")
-    public ResponseEntity<Object> create(@Valid @RequestBody CandidateEntity candidateEntity) {
+    public ResponseEntity<Object> create(@Valid @RequestBody JobEntity jobEntity) {
         try {
-            var result = this.createCandidateUseCase.execute(candidateEntity);
+            var result = this.createJobUseCaseUseCase.execute(jobEntity);
             return ResponseEntity.ok().body(result);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+
         }
     }
 }
