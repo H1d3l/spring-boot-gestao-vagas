@@ -2,6 +2,7 @@ package br.com.hidelbrandorios.springbootgestaovagas.modules.company.useCases;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 
 import javax.security.sasl.AuthenticationException;
 
@@ -15,6 +16,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
 import br.com.hidelbrandorios.springbootgestaovagas.modules.company.dto.AuthCompanyDTO;
+import br.com.hidelbrandorios.springbootgestaovagas.modules.company.dto.AuthCompanyResponseDTO;
 import br.com.hidelbrandorios.springbootgestaovagas.modules.company.repositories.CompanyRepository;
 
 @Service
@@ -29,7 +31,7 @@ public class AuthCompanyUseCase {
     @Value("${security.token.secret}")
     private String secretKey;
 
-    public String execute(AuthCompanyDTO authCompanyDTO) throws AuthenticationException{
+    public AuthCompanyResponseDTO execute(AuthCompanyDTO authCompanyDTO) throws AuthenticationException{
         var company = this.companyRepository.findByUsername(authCompanyDTO.getUsername()).orElseThrow(
             () -> {
                 throw new UsernameNotFoundException("Company not found");
@@ -45,11 +47,19 @@ public class AuthCompanyUseCase {
         }
 
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
+        var expiresIn = Instant.now().plus(Duration.ofMinutes(10));
+
         var token = JWT.create().withIssuer("javagas")
-        .withExpiresAt(Instant.now().plus(Duration.ofHours(2)))
+        .withExpiresAt(expiresIn)
         .withSubject(company.getId().toString())
+        .withClaim("roles", Arrays.asList("COMPANY"))
         .sign(algorithm);
-        
-        return token;
+
+        var authCompanyResponseDTO = AuthCompanyResponseDTO.builder()
+            .access_token(token)
+            .expires_in(expiresIn.toEpochMilli())
+            .build();
+
+        return authCompanyResponseDTO;
     }
 }
